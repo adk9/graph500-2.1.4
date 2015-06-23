@@ -13,7 +13,7 @@
 #include "../graph500.h"
 #include "../options.h"
 
-static int64_t maxvtx, maxdeg, nIJ;
+static int64_t maxvtx, maxdeg, nIJ, mindeg, maxpart, totalpart;
 static const struct packed_edge * restrict IJ;
 static int64_t * restrict head, * restrict deg, * restrict next;
 
@@ -26,6 +26,9 @@ create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
   nIJ = nedge;
   maxvtx = -1;
   maxdeg = -1;
+  mindeg = INT64_MAX;
+  maxpart = 0;
+  totalpart = 0;
 
   int64_t k;
   for (k = 0; k < nedge; ++k) {
@@ -71,7 +74,6 @@ create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
 
   assert (nodes > 0);
   if (nodes < 2) {
-    printf("# maxvtx = %lu maxdeg = %lu nedges = %lu\n", maxvtx, maxdeg, nedge);
     printf("# v deg(v)\n");
   }
   for (int64_t kg = 0; kg <= maxvtx; ++kg) {
@@ -80,20 +82,33 @@ create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
     }
     if (deg[kg] > maxdeg)
       maxdeg = deg[kg];
+    if (deg[kg] < mindeg)
+      mindeg = deg[kg];
   }
+
   int64_t vpart = maxvtx/nodes;
 
   if (nodes >= 2) {
-    printf("# partitions = %lu vertices/partition = %lu\n", nodes, vpart);
     printf("# partition deg\n");
-    for (int64_t p = 0; p < nodes; ++p) {
-      int64_t edges = 0;
-      for (int64_t v = 0; v < vpart; ++v) {
-        edges += deg[(p*vpart)+v];
-      }
+  }
+  for (int64_t p = 0; p < nodes; ++p) {
+    int64_t edges = 0;
+    for (int64_t v = 0; v < vpart; ++v) {
+      edges += deg[(p*vpart)+v];
+    }
+    if (edges > maxpart)
+      maxpart = edges;
+    totalpart += edges;
+    if (nodes >= 2) {
       printf("%lu %lu\n", p, edges); 
     }
   }
+  printf("# maxvtx = %lu maxdeg = %lu mindeg = %lu nedges = %lu\n",
+         maxvtx, maxdeg, mindeg, nedge);
+  printf("# partitions = %lu vert/part = %lu\n", nodes, vpart);
+  int64_t avgpart = totalpart/nodes;
+  printf("# maxpart = %lu avgpart = %lu imbalance = %lf\n",
+         maxpart, avgpart, (float)maxpart/avgpart);
   return err;
 }
 
