@@ -21,6 +21,7 @@
 
 int VERBOSE = 0;
 int use_RMAT = 0;
+int do_not_PERMUTE = 0;
 
 char *dumpname = NULL;
 char *rootname = NULL;
@@ -73,6 +74,7 @@ get_options (int argc, char **argv) {
 	      "  V   : Enable extra (Verbose) output\n"
 	      "  o   : Read the edge list from (or dump to) the named file\n"
 	      "  r   : Read the BFS roots from (or dump to) the named file\n"
+	      "  p   : Do not permute nodes after generation (default: permute)\n"
 	      "  n   : Nodes to divide into\n"
 	      "\n"
 	      "Outputs take the form of \"key: value\", with keys:\n"
@@ -225,6 +227,9 @@ get_options (int argc, char **argv) {
       }
       whichset |= 8;
       ++nset;
+      break;
+    case 'p':
+      do_not_PERMUTE = 1;
       break;
     case 'n':
       errno = 0;

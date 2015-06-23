@@ -16,6 +16,7 @@
 #endif
 
 #include "xalloc.h"
+#include "options.h"
 #include "prng.h"
 #include "generator/splittable_mrg.h"
 #include "generator/graph_generator.h"
@@ -211,12 +212,16 @@ rmat_edgelist (struct packed_edge *IJ_in, int64_t nedge, int SCALE,
       mrg_skip (prng_state, 1, NRAND(nedge), 0);
     OMP("omp barrier");
     new_st = *(mrg_state*)prng_state;
-    permute_vertex_labels (IJ, nedge, (1L<<SCALE), &new_st, iwork);
+    if (!do_not_PERMUTE) {
+      permute_vertex_labels (IJ, nedge, (1L<<SCALE), &new_st, iwork);
+    }
     OMP("omp single")
       mrg_skip (prng_state, 1, (1L<<SCALE), 0);
     OMP("omp barrier");
     new_st = *(mrg_state*)prng_state;
-    permute_edgelist (IJ, nedge, &new_st);
+    if (!do_not_PERMUTE) {
+      permute_edgelist (IJ, nedge, &new_st);
+    }
   }
   mrg_skip (prng_state, 1, nedge, 0);
 
