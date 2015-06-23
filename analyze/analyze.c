@@ -17,8 +17,8 @@ static int64_t maxvtx, maxdeg, nIJ, mindeg, maxpart, totalpart;
 static const struct packed_edge * restrict IJ;
 static int64_t * restrict head, * restrict deg, * restrict next;
 
-#define NSWEEPS 15
-static int64_t sweep[NSWEEPS] = {1,2,4,8,16,32,64,96,128,192,256,384,512,768,1024};
+#define NSWEEPS 14
+static int64_t sweep[NSWEEPS] = {1,2,4,8,16,32,64,128,256,512,1024,2048,3072,4096};
 
 int 
 create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
