@@ -7,6 +7,7 @@
 extern int VERBOSE;
 extern int use_RMAT;
 extern int do_not_PERMUTE;
+extern int do_SWEEP;
 extern char *dumpname;
 extern char *rootname;
 

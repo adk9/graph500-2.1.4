@@ -89,16 +89,23 @@ create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
       mindeg = deg[kg];
   }
 
-  int64_t vpart = maxvtx/nodes;
+  printf("# maxvtx = %lu maxdeg = %lu mindeg = %lu nedges = %lu\n",
+         maxvtx, maxdeg, mindeg, nedge);
 
-  if (nodes >= 2) {
-    printf("# partition deg\n");
-  }
+  int nsweeps;
+  if (!do_SWEEP) {
+    if (nodes >= 2)
+      printf("# partition deg\n");
+    nsweeps = 1;
+  } else
+    nsweeps = NSWEEPS;
 
-  for (int64_t i = 0; i < NSWEEPS; ++i) {
+  for (int64_t i = 0; i < nsweeps; ++i) {
     maxpart = 0;
     totalpart = 0;
-    nodes = sweep[i];
+    if (do_SWEEP)
+      nodes = sweep[i];
+    int64_t vpart = maxvtx/nodes;
     for (int64_t p = 0; p < nodes; ++p) {
       int64_t edges = 0;
       for (int64_t v = 0; v < vpart; ++v) {
@@ -107,8 +114,9 @@ create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
       if (edges > maxpart)
         maxpart = edges;
       totalpart += edges;
-      if (nodes >= 2) {
-        //printf("%lu %lu\n", p, edges); 
+      if (!do_SWEEP) {
+        if (nodes >= 2)
+          printf("%lu %lu\n", p, edges); 
       }
     }
 
@@ -116,9 +124,6 @@ create_graph_from_edgelist (struct packed_edge *IJ_in, int64_t nedge)
     printf("# part = %lu vert/part = %lu, maxpart = %lu avgpart = %lu imbalance = %lf\n",
            nodes, vpart, maxpart, avgpart, (float)maxpart/avgpart);
   }
-  printf("# maxvtx = %lu maxdeg = %lu mindeg = %lu nedges = %lu\n",
-         maxvtx, maxdeg, mindeg, nedge);
- 
   return err;
 }
 

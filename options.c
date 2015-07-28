@@ -22,6 +22,7 @@
 int VERBOSE = 0;
 int use_RMAT = 0;
 int do_not_PERMUTE = 0;
+int do_SWEEP = 0;
 
 char *dumpname = NULL;
 char *rootname = NULL;
@@ -50,7 +51,7 @@ get_options (int argc, char **argv) {
   if (getenv ("VERBOSE"))
     VERBOSE = 1;
 
-  while ((c = getopt (argc, argv, "v?hRs:e:A:a:B:b:C:c:D:d:Vo:r:pn:")) != -1)
+  while ((c = getopt (argc, argv, "v?hRs:e:A:a:B:b:C:c:D:d:Vo:r:pwn:")) != -1)
     switch (c) {
     case 'v':
       printf ("%s version %d\n", NAME, VERSION);
@@ -74,7 +75,8 @@ get_options (int argc, char **argv) {
 	      "  V   : Enable extra (Verbose) output\n"
 	      "  o   : Read the edge list from (or dump to) the named file\n"
 	      "  r   : Read the BFS roots from (or dump to) the named file\n"
-	      "  p   : Do not permute nodes after generation (default: permute)\n"
+	      "  p   : Do not permute nodes after generation (default: yes)\n"
+              "  w   : Do a sweep of chunks per node from 1 upto n (default: no)\n"
 	      "  n   : Nodes to divide into\n"
 	      "\n"
 	      "Outputs take the form of \"key: value\", with keys:\n"
@@ -230,6 +232,9 @@ get_options (int argc, char **argv) {
       break;
     case 'p':
       do_not_PERMUTE = 1;
+      break;
+    case 'w':
+      do_SWEEP = 1;
       break;
     case 'n':
       errno = 0;
